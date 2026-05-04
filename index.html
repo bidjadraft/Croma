@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>مدمج التلاوات - النسخة الشاملة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Amiri:wght@400;700&display=swap');
+
+        :root {
+            --deep-emerald: #022c22;
+            --royal-gold: #c5a059;
+            --soft-cream: #fdfaf3;
+        }
+        
+        body { 
+            font-family: 'Amiri', serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #022c22 0%, #064e3b 100%);
+            color: var(--soft-cream);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 L60 40 L100 50 L60 60 L50 100 L40 60 L0 50 L40 40 Z' fill='%23c5a059' fill-opacity='0.05'/%3E%3C/svg%3E");
+            z-index: -1;
+        }
+        
+        .main-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 12px;
+            max-width: 720px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .main-wrapper::after {
+            content: "";
+            position: absolute;
+            inset: 12px;
+            border: 1px solid rgba(197, 160, 89, 0.15);
+            border-radius: 30px;
+            pointer-events: none;
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 680px;
+            height: auto;
+            flex-shrink: 0;
+            order: 2;
+        }
+
+        .right-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 680px;
+            height: auto;
+            flex-shrink: 0;
+            order: 1;
+        }
+
+        .screen-container {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #000;
+            position: relative;
+            border-radius: 16px;
+            border: 2px solid #222;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            overflow: hidden;
+            padding: 12px !important;
+            font-size: 14px !important;
+        }
+
+        #videoCanvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .controls-panel {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 20px;
+            padding: 12px;
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .control-group {
+            margin-bottom: 12px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .control-group select {
+            width: 100%;
+            padding: 6px 8px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background-color: #222;
+            color: white;
+            font-size: 13px;
+        }
+
+        .btn-merge {
+            width: 100%;
+            padding: 10px 16px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+        }
+
+        /* Mobile layout - keep original vertical layout */
+        @media (max-width: 1024px) {
+            .main-wrapper {
+                flex-direction: column;
+                padding: 10px;
+                gap: 16px;
+                align-items: center;
+            }
+            
+            .left-panel {
+                width: 100%;
+                order: 2;
+            }
+            
+            .right-panel {
+                order: 1;
+                width: 100%;
+                max-width: 800px;
+            }
+            
+            .screen-container {
+                aspect-ratio: 16 / 9;
+            }
+            
+            .controls-panel {
+                max-height: 50vh;
+            }
+        }
+
+        select {
+            background: rgba(0, 0, 0, 0.4) !important;
+            color: #fff !important;
+            border: 1.5px solid rgba(197, 160, 89, 0.3) !important;
+            font-size: 13px !important;
+            padding: 10px !important;
+        }
+
+        select option {
+            background: #022c22;
+            color: #fff;
+        }
+
+        select:focus {
+            border-color: var(--royal-gold) !important;
+            background: rgba(197, 160, 89, 0.1) !important;
+        }
+
+        .btn-generate {
+            background: linear-gradient(45deg, #c5a059, #e2c28a);
+            color: #022c22;
+            font-weight: bold;
+            padding: 12px !important;
+            font-size: 14px !important;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-generate:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(197, 160, 89, 0.3);
+        }
+
+        .btn-download {
+            width: 100%;
+            background: linear-gradient(45deg, #c5a059, #e2c28a);
+            color: #022c22;
+            font-weight: 800;
+            padding: 14px 18px !important;
+            font-size: 14px !important;
+            border-radius: 16px;
+            border: 1px solid rgba(197, 160, 89, 0.35);
+            box-shadow:
+                0 14px 28px rgba(0, 0, 0, 0.35),
+                0 0 0 2px rgba(197, 160, 89, 0.12) inset;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        .btn-download:hover:not(:disabled) {
+            transform: translateY(-1px);
+            filter: brightness(1.02);
+            box-shadow:
+                0 18px 36px rgba(0, 0, 0, 0.45),
+                0 0 0 2px rgba(197, 160, 89, 0.16) inset;
+        }
+
+        .btn-download:active:not(:disabled) {
+            transform: translateY(0px);
+            box-shadow:
+                0 10px 20px rgba(0, 0, 0, 0.35),
+                0 0 0 2px rgba(197, 160, 89, 0.14) inset;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #666;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.active {
+            background-color: #10b981;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        audio {
+            height: 45px;
+            width: 100%;
+            filter: invert(1) hue-rotate(180deg);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <div class="left-panel">
+            <div class="controls-panel space-y-4">
+            <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-1">
+                    <label class="text-[10px] text-gray-500 uppercase font-bold mr-1">القارئ</label>
+                    <select id="reciterSelect" class="w-full p-2 rounded-lg outline-none"></select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] text-gray-500 uppercase font-bold mr-1">السورة</label>
+                    <select id="surahSelect" class="w-full p-2 rounded-lg outline-none"></select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-1">
+                    <label class="text-[10px] text-gray-500 uppercase font-bold mr-1">من الآية</label>
+                    <select id="startAyah" class="w-full p-2 rounded-lg outline-none"></select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[10px] text-gray-500 uppercase font-bold mr-1">إلى الآية</label>
+                    <select id="endAyah" class="w-full p-2 rounded-lg outline-none"></select>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-3 pt-2">
+                <button id="mergeBtn" class="btn-generate w-full py-3 rounded-xl flex items-center justify-center gap-2">
+                    <i class="fas fa-video"></i>
+                    توليد المقطع
+                </button>
+
+                <div id="statusArea" class="hidden flex items-center justify-center gap-3">
+                    <div class="status-dot active"></div>
+                    <span id="statusText" class="text-xs text-gray-400">جاري المعالجة...</span>
+                </div>
+
+                <div id="playerBox" class="hidden">
+                </div>
+            </div>
+            </div>
+        </div>
+        
+        <div class="right-panel">
+            <div class="screen-container" id="captureArea">
+                <canvas id="videoCanvas" width="1920" height="1080"></canvas>
+                <div id="downloadButtons" class="hidden absolute bottom-4 left-4 right-4 flex gap-2 z-50">
+                    <button id="downloadVideo" class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg text-base flex items-center justify-center gap-2 shadow-lg border-2 border-green-500">
+                        <i class="fas fa-download"></i> حفظ الفيديو
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const reciters = [
+            { id: "Yasser_Ad-Dussary_128kbps", name: "ياسر الدوسري" },
+            { id: "MaherAlMuaiqly128kbps", name: "ماهر المعيقلي" },
+            { id: "Abu%20Bakr%20Ash-Shaatree_128kbps", name: "أبوبكر الشاطري" },
+            { id: "Ibrahim_Akhdar_32kbps", name: "ابراهيم الاخضر" },
+            { id: "Ahmed_ibn_Ali_al-Ajamy_128kbps_ketaballah.net", name: "أحمد العجمي" },
+            { id: "Ayman_Sowaid_64kbps", name: "أيمن رشدي سويد" },
+            { id: "Bandar_Baleela_128kbps", name: "بندر بليلة" },
+            { id: "Saood%20bin%20Ibraaheem%20Ash-Shuraym_128kbps", name: "سعود الشريم" },
+            { id: "Ghamadi_40kbps", name: "سعد الغامدي" },
+            { id: "Abdul_Basit_Murattal_192kbps", name: "عبدالباسط عبدالصمد مرتل" },
+            { id: "Abdul_Basit_Mujawwad_128kbps", name: "عبدالباسط عبدالصمد مجود" },
+            { id: "Abdulaziz_Bin_Saleh_Al-Zahrani_128kbps", name: "عبد العزيز الزهراني" },
+            { id: "Abdurrahmaan_As-Sudais_192kbps", name: "عبدالرحمن السديس" },
+            { id: "Abdullah_Basfar_192kbps", name: "عبدالله بصفر" },
+            { id: "Abdullaah_3awwaad_Al-Juhaynee_128kbps", name: "عبد الله عواد الجهني" },
+            { id: "Ali_Jaber_64kbps", name: "علي جابر" },
+            { id: "Hudhaify_128kbps", name: "علي الحذيفي" },
+            { id: "Fares_Abbad_64kbps", name: "فارس عباد" },
+            { id: "khalefa_al_tunaiji_64kbps", name: "خليفة الطنيجي" },
+            { id: "Husary_128kbps_Mujawwad", name: "محمود خليل الحصري مجود" },
+            { id: "Husary_128kbps", name: "محمود خليل الحصري مرتل" },
+            { id: "Minshawy_Mujawwad_192kbps", name: "محمد صديق المنشاوي مجود" },
+            { id: "Minshawy_Murattal_128kbps", name: "محمد صديق المشاوي مرتل" },
+            { id: "Mohammad_al_Tablaway_128kbps", name: "محمد الطبلاوي" },
+            { id: "Muhammad_Ayyoub_128kbps", name: "محمد أيوب" },
+            { id: "Muhammad_Jibreel_128kbps", name: "محمد جبريل" },
+            { id: "Mahmood_Ali_Albana_128kbps", name: "محمود علي البنا" },
+            { id: "Alafasy_128kbps", name: "مشاري العفاسي" },
+            { id: "Mostafa_Ismaeel_128kbps", name: "مصطفى اسماعيل" },
+            { id: "Nasser_Alqatami_128kbps", name: "ناصر القطامي" },
+            { id: "Hani_Rifai_192kbps", name: "هاني الرفاعي" },
+            { id: "Abdullaah_3_awwaad_Al-Juhany_128kbps", name: "عبدالله الجهني" }
+        ];
+
+        const surahSelect = document.getElementById('surahSelect');
+        const startSelect = document.getElementById('startAyah');
+        const endSelect = document.getElementById('endAyah');
+        const reciterSelect = document.getElementById('reciterSelect');
+        const mergeBtn = document.getElementById('mergeBtn');
+        const statusArea = document.getElementById('statusArea');
+        const statusText = document.getElementById('statusText');
+        const playerBox = document.getElementById('playerBox');
+        const canvas = document.getElementById('videoCanvas');
+        const ctx = canvas.getContext('2d');
+        const downloadButtons = document.getElementById('downloadButtons');
+        const downloadVideo = document.getElementById('downloadVideo');
+
+        let audioCtx;
+        let timestamps = [];
+        let mediaRecorder;
+        let recordedChunks = [];
+        let currentAyahText = "اختر الآيات لبدء العرض";
+        let animationFrameId;
+        let videoUrl;
+
+        async function init() {
+            reciters.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.id; opt.textContent = r.name;
+                reciterSelect.appendChild(opt);
+            });
+
+            const res = await fetch('https://api.alquran.cloud/v1/surah');
+            const data = await res.json();
+            data.data.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.number; opt.textContent = s.name;
+                opt.dataset.max = s.numberOfAyahs;
+                surahSelect.appendChild(opt);
+            });
+
+            updateAyahLists();
+            surahSelect.onchange = updateAyahLists;
+            startSelect.onchange = handleStartChange;
+            
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            drawFrame();
+        }
+
+        function handleStartChange() {
+            const start = parseInt(startSelect.value);
+            const max = parseInt(surahSelect.selectedOptions[0].dataset.max);
+            endSelect.innerHTML = '';
+            for(let i=start; i<=max; i++) {
+                const opt = document.createElement('option');
+                opt.value = i; opt.textContent = i;
+                endSelect.appendChild(opt);
+            }
+            endSelect.value = start;
+        }
+
+        function updateAyahLists() {
+            const max = parseInt(surahSelect.selectedOptions[0].dataset.max);
+            startSelect.innerHTML = '';
+            for(let i=1; i<=max; i++) {
+                const opt = document.createElement('option');
+                opt.value = i; opt.textContent = i;
+                startSelect.appendChild(opt);
+            }
+            // Initialize endSelect with all ayahs starting from 1
+            endSelect.innerHTML = '';
+            for(let i=1; i<=max; i++) {
+                const opt = document.createElement('option');
+                opt.value = i; opt.textContent = i;
+                endSelect.appendChild(opt);
+            }
+            endSelect.value = 1;
+            startSelect.dispatchEvent(new Event('change'));
+        }
+
+        function drawFrame() {
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.font = "bold 65px 'Amiri'";
+            
+            const words = currentAyahText.split(' ');
+            let lines = [];
+            let currentLine = '';
+            const maxWidth = canvas.width * 0.65;
+
+            words.forEach(word => {
+                let testLine = currentLine + word + ' ';
+                if (ctx.measureText(testLine).width > maxWidth) {
+                    lines.push(currentLine);
+                    currentLine = word + ' ';
+                } else {
+                    currentLine = testLine;
+                }
+            });
+            lines.push(currentLine);
+
+            const lineHeight = 135;
+            const startY = (canvas.height / 2) - ((lines.length - 1) * lineHeight / 2);
+
+            lines.forEach((line, index) => {
+                ctx.fillText(line.trim(), canvas.width / 2, startY + (index * lineHeight));
+            });
+
+            animationFrameId = requestAnimationFrame(drawFrame);
+        }
+
+        const mergeBtnDefaultHTML = mergeBtn.innerHTML;
+        const mergeBtnDefaultBg = mergeBtn.style.backgroundColor;
+
+        function setMergeBtnState(html, disabled, bgColor) {
+            mergeBtn.innerHTML = html;
+            mergeBtn.disabled = disabled;
+            if (bgColor !== undefined) {
+                mergeBtn.style.backgroundColor = bgColor;
+            }
+        }
+
+        function resetMergeBtn() {
+            setMergeBtnState(mergeBtnDefaultHTML, false, mergeBtnDefaultBg || '#fff');
+        }
+
+        mergeBtn.onclick = async () => {
+            try {
+                // Hide download button when starting a new generation
+                downloadButtons.classList.add('hidden');
+                playerBox.classList.add('hidden');
+                statusArea.classList.add('hidden');
+
+                setMergeBtnState('<i class="fas fa-spinner fa-spin"></i> جاري التحضير...', true, '#f59e0b');
+
+                if (audioCtx) {
+                    await audioCtx.close();
+                }
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') {
+                    await audioCtx.resume();
+                }
+
+                const surahNum = surahSelect.value;
+                const start = parseInt(startSelect.value);
+                const end = parseInt(endSelect.value);
+                const reciter = reciterSelect.value;
+
+                setMergeBtnState('<i class="fas fa-spinner fa-spin"></i> جاري جلب النصوص...', true, '#f59e0b');
+                const tRes = await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}`);
+                const tData = await tRes.json();
+                const textSource = tData.data.ayahs;
+
+                setMergeBtnState('<i class="fas fa-spinner fa-spin"></i> جاري تحميل الصوتيات...', true, '#f59e0b');
+                timestamps = [];
+                const overlapTime = 0.1;
+                let offset = 0;
+                const audioBuffers = [];
+
+                for (let i = start; i <= end; i++) {
+                    const padded = i.toString().padStart(3, '0');
+                    const paddedSurah = surahNum.toString().padStart(3, '0');
+                    const audioUrl = `https://www.everyayah.com/data/${reciter}/${paddedSurah}${padded}.mp3`;
+                    const audioRes = await fetch(audioUrl);
+                    if (!audioRes.ok) {
+                        throw new Error(`فشل تحميل الصوت (HTTP ${audioRes.status}) للآية ${i}. تأكد من القارئ المختار.`);
+                    }
+                    const ct = (audioRes.headers.get('content-type') || '').toLowerCase();
+                    if (!ct.includes('audio') && !ct.includes('mpeg') && !ct.includes('mp3') && !ct.includes('octet-stream')) {
+                        throw new Error(`رابط الصوت غير صالح للآية ${i} (content-type: ${ct || 'unknown'}). ربما اسم القارئ غير صحيح.`);
+                    }
+                    const audioData = await audioRes.arrayBuffer();
+                    const audioBuffer = await audioCtx.decodeAudioData(audioData);
+
+                    let rawText = textSource[i - 1].text;
+                    if (i === 1 && surahNum !== "1" && surahNum !== "9") {
+                        const parts = rawText.split(' ');
+                        if (parts.length > 4) {
+                            rawText = parts.slice(4).join(' ').trim();
+                        }
+                    }
+                    const dur = audioBuffer.duration;
+
+                    audioBuffers.push(audioBuffer);
+                    timestamps.push({
+                        start: offset,
+                        end: offset + dur - (i < end ? overlapTime : 0),
+                        text: rawText
+                    });
+
+                    offset += (dur - overlapTime);
+                }
+
+                setMergeBtnState('<i class="fas fa-spinner fa-spin"></i> جاري دمج الصوتيات...', true, '#f59e0b');
+                const merged = mergeBuffers(audioBuffers, overlapTime);
+                const wavBlob = bufferToWav(merged);
+
+                const tempAudio = new Audio(URL.createObjectURL(wavBlob));
+                tempAudio.crossOrigin = 'anonymous';
+
+                setMergeBtnState('<i class="fas fa-video"></i> جاري التسجيل...', true, '#dc2626');
+                tempAudio.onloadeddata = () => {
+                    startRecordingWithAudio(tempAudio);
+                    tempAudio.onloadeddata = null;
+                };
+            } catch (e) {
+                console.error(e);
+                alert('حدث خطأ: ' + e.message);
+                resetMergeBtn();
+            }
+        };
+
+        function startRecordingWithAudio(audioElement) {
+            statusText.textContent = "جاري الدمج والتسجيل...";
+            
+            const videoStream = canvas.captureStream(30);
+            
+            // Create audio stream from the audio element
+            const audioSource = audioCtx.createMediaElementSource(audioElement);
+            const audioDestination = audioCtx.createMediaStreamDestination();
+            audioSource.connect(audioDestination);
+            audioSource.connect(audioCtx.destination);
+            
+            const audioStream = audioDestination.stream;
+            
+            const combinedStream = new MediaStream([
+                ...videoStream.getVideoTracks(),
+                ...audioStream.getAudioTracks()
+            ]);
+
+            // Try different MIME types for better compatibility
+            let mimeType = 'video/webm;codecs=vp9,opus';
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                mimeType = 'video/webm;codecs=vp8,opus';
+            }
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                mimeType = 'video/webm';
+            }
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                mimeType = 'video/mp4';
+            }
+
+            mediaRecorder = new MediaRecorder(combinedStream, {
+                mimeType: mimeType,
+                videoBitsPerSecond: 8000000
+            });
+            
+            recordedChunks = [];
+            mediaRecorder.ondataavailable = e => { 
+                if(e.data.size > 0) recordedChunks.push(e.data); 
+            };
+            
+            mediaRecorder.onstop = () => {
+                const finalVideoBlob = new Blob(recordedChunks, { type: mimeType });
+                videoUrl = URL.createObjectURL(finalVideoBlob);
+                
+                downloadVideo.onclick = () => {
+                    const a = document.createElement('a');
+                    a.href = videoUrl;
+                    a.download = `Quran_${Date.now()}.${mimeType.split('/')[1].split(';')[0]}`;
+                    a.click();
+                };
+                
+                statusArea.classList.add('hidden');
+                playerBox.classList.remove('hidden');
+                downloadButtons.classList.remove('hidden');
+                mergeBtn.classList.remove('hidden');
+                resetMergeBtn();
+            };
+
+            mediaRecorder.start();
+            audioElement.currentTime = 0;
+            audioElement.play().catch(e => {
+                console.error('Audio play failed:', e);
+                alert('فشل تشغيل الصوت: ' + e.message);
+                mediaRecorder.stop();
+                statusArea.classList.add('hidden');
+                resetMergeBtn();
+            });
+
+            const sync = () => {
+                if (!mediaRecorder || mediaRecorder.state !== "recording") return;
+                const ct = audioElement.currentTime;
+                const active = timestamps.find(t => ct >= t.start && ct < t.end);
+                
+                if (active) currentAyahText = active.text;
+                
+                if(!audioElement.ended) {
+                    requestAnimationFrame(sync);
+                } else {
+                    if (mediaRecorder.state === "recording") {
+                        currentAyahText = "تم";
+                        mediaRecorder.stop();
+                    }
+                }
+            };
+            sync();
+        }
+
+        function mergeBuffers(bufs, overlap) {
+            const sr = bufs[0].sampleRate;
+            const ovSamples = Math.floor(overlap * sr);
+            let totalLen = bufs.reduce((a, b) => a + b.length, 0) - (bufs.length - 1) * ovSamples;
+            const res = audioCtx.createBuffer(bufs[0].numberOfChannels, totalLen, sr);
+
+            for(let c=0; c<bufs[0].numberOfChannels; c++) {
+                const data = res.getChannelData(c);
+                let cursor = 0;
+                bufs.forEach((b, i) => {
+                    const bData = b.getChannelData(c);
+                    for(let j=0; j<bData.length; j++) {
+                        const idx = cursor + j;
+                        if(i > 0 && j < ovSamples) {
+                            const weight = j / ovSamples;
+                            data[idx - ovSamples] = (data[idx - ovSamples] * (1 - weight)) + (bData[j] * weight);
+                        } else {
+                            data[i > 0 ? idx - ovSamples : idx] = bData[j];
+                        }
+                    }
+                    cursor += bData.length - (i < bufs.length - 1 ? ovSamples : 0);
+                });
+            }
+            return res;
+        }
+
+        function bufferToWav(ab) {
+            let n = ab.numberOfChannels, len = ab.length * n * 2 + 44,
+                buf = new ArrayBuffer(len), view = new DataView(buf),
+                ch = [], i, s, off = 0, p = 0;
+            const u16 = (d) => { view.setUint16(p, d, true); p += 2; };
+            const u32 = (d) => { view.setUint32(p, d, true); p += 4; };
+            u32(0x46464952); u32(len - 8); u32(0x45564157); u32(0x20746d66);
+            u32(16); u16(1); u16(n); u32(ab.sampleRate); u32(ab.sampleRate * 2 * n);
+            u16(n * 2); u16(16); u32(0x61746164); u32(len - p - 4);
+            for (i = 0; i < n; i++) ch.push(ab.getChannelData(i));
+            while (p < len) {
+                for (i = 0; i < n; i++) {
+                    s = Math.max(-1, Math.min(1, ch[i][off]));
+                    s = s < 0 ? s * 0x8000 : s * 0x7FFF;
+                    view.setInt16(p, s, true); p += 2;
+                }
+                off++;
+            }
+            return new Blob([buf], { type: 'audio/wav' });
+        }
+
+        init();
+    </script>
+</body>
+</html>
