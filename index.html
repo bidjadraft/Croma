@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -95,7 +95,7 @@
         const ctx = canvas.getContext('2d');
         const downloadButtons = document.getElementById('downloadButtons');
         const downloadVideo = document.getElementById('downloadVideo');
-        let audioCtx, timestamps = [], mediaRecorder, recordedChunks = [], currentAyahText = "اختر السورة والآيات لبدء التصميم", finalBlob = null;
+        let audioCtx, timestamps = [], mediaRecorder, recordedChunks = [], currentAyahText = "اختر السورة والآيات لبدء التصميم", currentAyahNumber = null, finalBlob = null;
 
         async function init() {
             reciters.forEach(r => {
@@ -143,6 +143,10 @@
             mergeBtn.disabled = isLoading;
         }
 
+        function toArabicDigits(n) {
+            return n.toString().replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+        }
+
         function drawFrame() {
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -150,7 +154,13 @@
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
             ctx.font = "bold 85px 'Amiri'";
-            const words = currentAyahText.split(' ');
+
+            let displayText = currentAyahText;
+            if (currentAyahNumber) {
+                displayText = `${currentAyahText} ۝${toArabicDigits(currentAyahNumber)}`;
+            }
+
+            const words = displayText.split(' ');
             let lines = [], currentLine = '';
             const maxWidth = canvas.width * 0.75;
             words.forEach(word => {
@@ -213,7 +223,7 @@
                         if (p.length > 4) rawText = p.slice(4).join(' ').trim();
                     }
                     audioBuffers.push(audioBuffer);
-                    timestamps.push({ start: offset, end: offset + audioBuffer.duration, text: rawText });
+                    timestamps.push({ start: offset, end: offset + audioBuffer.duration, text: rawText, ayahNum: i });
                     offset += audioBuffer.duration - 0.1;
                 }
                 const merged = mergeBuffers(audioBuffers, 0.1);
@@ -248,7 +258,10 @@
                 if (mediaRecorder.state !== "recording") return;
                 const ct = audioElement.currentTime;
                 const active = timestamps.find(t => ct >= t.start && ct < t.end);
-                if (active) currentAyahText = active.text;
+                if (active) {
+                    currentAyahText = active.text;
+                    currentAyahNumber = active.ayahNum;
+                }
                 if(!audioElement.ended) requestAnimationFrame(sync);
                 else mediaRecorder.stop();
             };
@@ -317,3 +330,5 @@
     </script>
 </body>
 </html>
+
+```
