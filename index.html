@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مدمج التلاوات - النسخة الشاملة</title>
+    <title>مدمج التلاوات</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -24,66 +24,29 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            padding: 15px;
         }
 
         body::before {
             content: "";
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 L60 40 L100 50 L60 60 L50 100 L40 60 L0 50 L40 40 Z' fill='%23c5a059' fill-opacity='0.05'/%3E%3C/svg%3E");
             z-index: -1;
         }
         
         .main-wrapper {
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 12px;
-            max-width: 720px;
+            max-width: 850px;
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(15px);
             border: 1px solid rgba(197, 160, 89, 0.3);
-            border-radius: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            position: relative;
-        }
-
-        .main-wrapper::after {
-            content: "";
-            position: absolute;
-            inset: 12px;
-            border: 1px solid rgba(197, 160, 89, 0.15);
             border-radius: 30px;
-            pointer-events: none;
-        }
-
-        .left-panel {
+            padding: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
             gap: 20px;
-            width: 100%;
-            max-width: 680px;
-            height: auto;
-            flex-shrink: 0;
-            order: 2;
-        }
-
-        .right-panel {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            max-width: 680px;
-            height: auto;
-            flex-shrink: 0;
-            order: 1;
         }
 
         .screen-container {
@@ -92,238 +55,137 @@
             background-color: #000;
             position: relative;
             border-radius: 16px;
-            border: 2px solid #222;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            border: 2px solid rgba(197, 160, 89, 0.2);
             overflow: hidden;
-            padding: 12px !important;
-            font-size: 14px !important;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
         }
 
         #videoCanvas {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            display: block;
         }
 
         .controls-panel {
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 20px;
-            padding: 12px;
-            border: 1px solid rgba(197, 160, 89, 0.3);
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .control-group {
-            margin-bottom: 12px;
-        }
-
-        .control-group label {
-            display: block;
-            margin-bottom: 4px;
-            font-size: 12px;
-            color: #ccc;
-        }
-
-        .control-group select {
-            width: 100%;
-            padding: 6px 8px;
-            border-radius: 8px;
-            border: 1px solid #444;
-            background-color: #222;
-            color: white;
-            font-size: 13px;
-        }
-
-        .btn-merge {
-            width: 100%;
-            padding: 10px 16px;
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-        }
-
-        /* Mobile layout - keep original vertical layout */
-        @media (max-width: 1024px) {
-            .main-wrapper {
-                flex-direction: column;
-                padding: 10px;
-                gap: 16px;
-                align-items: center;
-            }
-            
-            .left-panel {
-                width: 100%;
-                order: 2;
-            }
-            
-            .right-panel {
-                order: 1;
-                width: 100%;
-                max-width: 800px;
-            }
-            
-            .screen-container {
-                aspect-ratio: 16 / 9;
-            }
-            
-            .controls-panel {
-                max-height: 50vh;
-            }
+            padding: 20px;
+            border: 1px solid rgba(197, 160, 89, 0.2);
         }
 
         select {
-            background: rgba(0, 0, 0, 0.4) !important;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5) !important;
             color: #fff !important;
             border: 1.5px solid rgba(197, 160, 89, 0.3) !important;
-            font-size: 13px !important;
+            border-radius: 10px !important;
             padding: 10px !important;
+            font-size: 14px !important;
+            outline: none;
         }
 
-        select option {
-            background: #022c22;
-            color: #fff;
-        }
-
-        select:focus {
-            border-color: var(--royal-gold) !important;
-            background: rgba(197, 160, 89, 0.1) !important;
+        label {
+            display: block;
+            font-size: 11px;
+            color: var(--royal-gold);
+            margin-bottom: 5px;
+            font-weight: bold;
+            margin-right: 5px;
         }
 
         .btn-generate {
             background: linear-gradient(45deg, #c5a059, #e2c28a);
             color: #022c22;
-            font-weight: bold;
-            padding: 12px !important;
-            font-size: 14px !important;
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn-generate:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(197, 160, 89, 0.3);
-        }
-
-        .btn-download {
-            width: 100%;
-            background: linear-gradient(45deg, #c5a059, #e2c28a);
-            color: #022c22;
             font-weight: 800;
-            padding: 14px 18px !important;
-            font-size: 14px !important;
-            border-radius: 16px;
-            border: 1px solid rgba(197, 160, 89, 0.35);
-            box-shadow:
-                0 14px 28px rgba(0, 0, 0, 0.35),
-                0 0 0 2px rgba(197, 160, 89, 0.12) inset;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-        }
-
-        .btn-download:hover:not(:disabled) {
-            transform: translateY(-1px);
-            filter: brightness(1.02);
-            box-shadow:
-                0 18px 36px rgba(0, 0, 0, 0.45),
-                0 0 0 2px rgba(197, 160, 89, 0.16) inset;
-        }
-
-        .btn-download:active:not(:disabled) {
-            transform: translateY(0px);
-            box-shadow:
-                0 10px 20px rgba(0, 0, 0, 0.35),
-                0 0 0 2px rgba(197, 160, 89, 0.14) inset;
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: #666;
-            animation: pulse 2s infinite;
-        }
-
-        .status-dot.active {
-            background-color: #10b981;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        audio {
-            height: 45px;
+            padding: 15px !important;
+            font-size: 16px !important;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
             width: 100%;
-            filter: invert(1) hue-rotate(180deg);
+            margin-top: 10px;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-generate:disabled { 
+            background: #1a2e2a !important;
+            color: #c5a059 !important;
+            cursor: not-allowed;
+            opacity: 0.9;
+            transform: scale(0.98);
+            border: 1px solid rgba(197, 160, 89, 0.4);
+        }
+
+        .download-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-download-final {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+            font-weight: bold;
+            padding: 18px 35px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+            border: 2px solid rgba(255,255,255,0.1);
         }
     </style>
 </head>
 <body>
 
     <div class="main-wrapper">
-        <div class="left-panel">
-            <div class="controls-panel space-y-4">
-            <div class="grid grid-cols-2 gap-3">
-                <div class="space-y-1">
-                    <label class="text-[10px] text-gray-500 uppercase font-bold mr-1">القارئ</label>
-                    <select id="reciterSelect" class="w-full p-2 rounded-lg outline-none"></select>
-                </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] text-gray-500 uppercase font-bold mr-1">السورة</label>
-                    <select id="surahSelect" class="w-full p-2 rounded-lg outline-none"></select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div class="space-y-1">
-                    <label class="text-[10px] text-gray-500 uppercase font-bold mr-1">من الآية</label>
-                    <select id="startAyah" class="w-full p-2 rounded-lg outline-none"></select>
-                </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] text-gray-500 uppercase font-bold mr-1">إلى الآية</label>
-                    <select id="endAyah" class="w-full p-2 rounded-lg outline-none"></select>
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-3 pt-2">
-                <button id="mergeBtn" class="btn-generate w-full py-3 rounded-xl flex items-center justify-center gap-2">
-                    <i class="fas fa-video"></i>
-                    توليد المقطع
+        <div class="screen-container" id="captureArea">
+            <canvas id="videoCanvas" width="1920" height="1080"></canvas>
+            <div id="downloadButtons" class="hidden download-overlay">
+                <button id="downloadVideo" class="btn-download-final">
+                    <i class="fas fa-cloud-download-alt"></i> حفظ المقطع
                 </button>
-
-                <div id="statusArea" class="hidden flex items-center justify-center gap-3">
-                    <div class="status-dot active"></div>
-                    <span id="statusText" class="text-xs text-gray-400">جاري المعالجة...</span>
-                </div>
-
-                <div id="playerBox" class="hidden">
-                </div>
-            </div>
             </div>
         </div>
-        
-        <div class="right-panel">
-            <div class="screen-container" id="captureArea">
-                <canvas id="videoCanvas" width="1920" height="1080"></canvas>
-                <div id="downloadButtons" class="hidden absolute bottom-4 left-4 right-4 flex gap-2 z-50">
-                    <button id="downloadVideo" class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg text-base flex items-center justify-center gap-2 shadow-lg border-2 border-green-500">
-                        <i class="fas fa-download"></i> حفظ الفيديو
-                    </button>
+
+        <div class="controls-panel">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label>القارئ</label>
+                    <select id="reciterSelect"></select>
+                </div>
+                <div>
+                    <label>السورة</label>
+                    <select id="surahSelect"></select>
                 </div>
             </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label>من الآية</label>
+                    <select id="startAyah"></select>
+                </div>
+                <div>
+                    <label>إلى الآية</label>
+                    <select id="endAyah"></select>
+                </div>
+            </div>
+
+            <button id="mergeBtn" class="btn-generate">
+                <i class="fas fa-play-circle"></i>
+                <span id="btnText">توليد المقطع</span>
+            </button>
         </div>
     </div>
 
@@ -368,21 +230,13 @@
         const endSelect = document.getElementById('endAyah');
         const reciterSelect = document.getElementById('reciterSelect');
         const mergeBtn = document.getElementById('mergeBtn');
-        const statusArea = document.getElementById('statusArea');
-        const statusText = document.getElementById('statusText');
-        const playerBox = document.getElementById('playerBox');
+        const btnText = document.getElementById('btnText');
         const canvas = document.getElementById('videoCanvas');
         const ctx = canvas.getContext('2d');
         const downloadButtons = document.getElementById('downloadButtons');
         const downloadVideo = document.getElementById('downloadVideo');
 
-        let audioCtx;
-        let timestamps = [];
-        let mediaRecorder;
-        let recordedChunks = [];
-        let currentAyahText = "اختر الآيات لبدء العرض";
-        let animationFrameId;
-        let videoUrl;
+        let audioCtx, timestamps = [], mediaRecorder, recordedChunks = [], currentAyahText = "اختر السورة والآيات لبدء التوليد", videoUrl;
 
         async function init() {
             reciters.forEach(r => {
@@ -395,7 +249,8 @@
             const data = await res.json();
             data.data.forEach(s => {
                 const opt = document.createElement('option');
-                opt.value = s.number; opt.textContent = s.name;
+                opt.value = s.number; 
+                opt.textContent = `${s.number}. ${s.name}`;
                 opt.dataset.max = s.numberOfAyahs;
                 surahSelect.appendChild(opt);
             });
@@ -403,10 +258,6 @@
             updateAyahLists();
             surahSelect.onchange = updateAyahLists;
             startSelect.onchange = handleStartChange;
-            
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-            }
             drawFrame();
         }
 
@@ -419,7 +270,6 @@
                 opt.value = i; opt.textContent = i;
                 endSelect.appendChild(opt);
             }
-            endSelect.value = start;
         }
 
         function updateAyahLists() {
@@ -430,30 +280,31 @@
                 opt.value = i; opt.textContent = i;
                 startSelect.appendChild(opt);
             }
-            // Initialize endSelect with all ayahs starting from 1
-            endSelect.innerHTML = '';
-            for(let i=1; i<=max; i++) {
-                const opt = document.createElement('option');
-                opt.value = i; opt.textContent = i;
-                endSelect.appendChild(opt);
+            handleStartChange();
+        }
+
+        function setBtnState(text, isLoading) {
+            btnText.textContent = text;
+            mergeBtn.disabled = isLoading;
+            const icon = mergeBtn.querySelector('i');
+            if (isLoading) {
+                icon.className = 'fas fa-spinner fa-spin';
+            } else {
+                icon.className = 'fas fa-play-circle';
             }
-            endSelect.value = 1;
-            startSelect.dispatchEvent(new Event('change'));
         }
 
         function drawFrame() {
             ctx.fillStyle = "black";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.font = "bold 65px 'Amiri'";
+            ctx.font = "bold 85px 'Amiri'";
             
             const words = currentAyahText.split(' ');
-            let lines = [];
-            let currentLine = '';
-            const maxWidth = canvas.width * 0.65;
+            let lines = [], currentLine = '';
+            const maxWidth = canvas.width * 0.75;
 
             words.forEach(word => {
                 let testLine = currentLine + word + ' ';
@@ -466,225 +317,128 @@
             });
             lines.push(currentLine);
 
-            const lineHeight = 135;
+            const lineHeight = 150;
             const startY = (canvas.height / 2) - ((lines.length - 1) * lineHeight / 2);
 
             lines.forEach((line, index) => {
                 ctx.fillText(line.trim(), canvas.width / 2, startY + (index * lineHeight));
             });
 
-            animationFrameId = requestAnimationFrame(drawFrame);
-        }
-
-        const mergeBtnDefaultHTML = mergeBtn.innerHTML;
-        const mergeBtnDefaultBg = mergeBtn.style.backgroundColor;
-
-        function setMergeBtnState(html, disabled, bgColor) {
-            mergeBtn.innerHTML = html;
-            mergeBtn.disabled = disabled;
-            if (bgColor !== undefined) {
-                mergeBtn.style.backgroundColor = bgColor;
-            }
-        }
-
-        function resetMergeBtn() {
-            setMergeBtnState(mergeBtnDefaultHTML, false, mergeBtnDefaultBg || '#fff');
+            requestAnimationFrame(drawFrame);
         }
 
         mergeBtn.onclick = async () => {
             try {
-                // Hide download button when starting a new generation
                 downloadButtons.classList.add('hidden');
-                playerBox.classList.add('hidden');
-                statusArea.classList.add('hidden');
+                setBtnState("جاري جلب النصوص...", true);
 
-                setMergeBtnState('<i class="fas fa-spinner fa-spin"></i> جاري التحضير...', true, '#f59e0b');
-
-                if (audioCtx) {
-                    await audioCtx.close();
-                }
+                if (audioCtx) await audioCtx.close();
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                if (audioCtx.state === 'suspended') {
-                    await audioCtx.resume();
-                }
 
                 const surahNum = surahSelect.value;
                 const start = parseInt(startSelect.value);
                 const end = parseInt(endSelect.value);
                 const reciter = reciterSelect.value;
 
-                setMergeBtnState('<i class="fas fa-spinner fa-spin"></i> جاري جلب النصوص...', true, '#f59e0b');
                 const tRes = await fetch(`https://api.alquran.cloud/v1/surah/${surahNum}`);
                 const tData = await tRes.json();
                 const textSource = tData.data.ayahs;
 
-                setMergeBtnState('<i class="fas fa-spinner fa-spin"></i> جاري تحميل الصوتيات...', true, '#f59e0b');
+                setBtnState("جاري تحميل الصوتيات...", true);
                 timestamps = [];
-                const overlapTime = 0.1;
-                let offset = 0;
                 const audioBuffers = [];
+                let offset = 0;
 
                 for (let i = start; i <= end; i++) {
                     const padded = i.toString().padStart(3, '0');
                     const paddedSurah = surahNum.toString().padStart(3, '0');
                     const audioUrl = `https://www.everyayah.com/data/${reciter}/${paddedSurah}${padded}.mp3`;
+                    
                     const audioRes = await fetch(audioUrl);
-                    if (!audioRes.ok) {
-                        throw new Error(`فشل تحميل الصوت (HTTP ${audioRes.status}) للآية ${i}. تأكد من القارئ المختار.`);
-                    }
-                    const ct = (audioRes.headers.get('content-type') || '').toLowerCase();
-                    if (!ct.includes('audio') && !ct.includes('mpeg') && !ct.includes('mp3') && !ct.includes('octet-stream')) {
-                        throw new Error(`رابط الصوت غير صالح للآية ${i} (content-type: ${ct || 'unknown'}). ربما اسم القارئ غير صحيح.`);
-                    }
                     const audioData = await audioRes.arrayBuffer();
                     const audioBuffer = await audioCtx.decodeAudioData(audioData);
 
                     let rawText = textSource[i - 1].text;
                     if (i === 1 && surahNum !== "1" && surahNum !== "9") {
-                        const parts = rawText.split(' ');
-                        if (parts.length > 4) {
-                            rawText = parts.slice(4).join(' ').trim();
-                        }
+                        const p = rawText.split(' ');
+                        if (p.length > 4) rawText = p.slice(4).join(' ').trim();
                     }
-                    const dur = audioBuffer.duration;
 
                     audioBuffers.push(audioBuffer);
                     timestamps.push({
                         start: offset,
-                        end: offset + dur - (i < end ? overlapTime : 0),
+                        end: offset + audioBuffer.duration,
                         text: rawText
                     });
-
-                    offset += (dur - overlapTime);
+                    offset += audioBuffer.duration - 0.1;
                 }
 
-                setMergeBtnState('<i class="fas fa-spinner fa-spin"></i> جاري دمج الصوتيات...', true, '#f59e0b');
-                const merged = mergeBuffers(audioBuffers, overlapTime);
+                setBtnState("جاري دمج المقاطع...", true);
+                const merged = mergeBuffers(audioBuffers, 0.1);
                 const wavBlob = bufferToWav(merged);
-
                 const tempAudio = new Audio(URL.createObjectURL(wavBlob));
-                tempAudio.crossOrigin = 'anonymous';
-
-                setMergeBtnState('<i class="fas fa-video"></i> جاري التسجيل...', true, '#dc2626');
-                tempAudio.onloadeddata = () => {
-                    startRecordingWithAudio(tempAudio);
-                    tempAudio.onloadeddata = null;
-                };
+                
+                tempAudio.onloadeddata = () => startRecording(tempAudio);
             } catch (e) {
-                console.error(e);
                 alert('حدث خطأ: ' + e.message);
-                resetMergeBtn();
+                setBtnState("توليد المقطع", false);
             }
         };
 
-        function startRecordingWithAudio(audioElement) {
-            statusText.textContent = "جاري الدمج والتسجيل...";
-            
-            const videoStream = canvas.captureStream(30);
-            
-            // Create audio stream from the audio element
-            const audioSource = audioCtx.createMediaElementSource(audioElement);
-            const audioDestination = audioCtx.createMediaStreamDestination();
-            audioSource.connect(audioDestination);
-            audioSource.connect(audioCtx.destination);
-            
-            const audioStream = audioDestination.stream;
-            
-            const combinedStream = new MediaStream([
-                ...videoStream.getVideoTracks(),
-                ...audioStream.getAudioTracks()
-            ]);
+        function startRecording(audioElement) {
+            setBtnState("جاري التسجيل النهائي...", true);
+            const stream = canvas.captureStream(30);
+            const audioDest = audioCtx.createMediaStreamDestination();
+            const source = audioCtx.createMediaElementSource(audioElement);
+            source.connect(audioDest);
+            source.connect(audioCtx.destination);
 
-            // Try different MIME types for better compatibility
-            let mimeType = 'video/webm;codecs=vp9,opus';
-            if (!MediaRecorder.isTypeSupported(mimeType)) {
-                mimeType = 'video/webm;codecs=vp8,opus';
-            }
-            if (!MediaRecorder.isTypeSupported(mimeType)) {
-                mimeType = 'video/webm';
-            }
-            if (!MediaRecorder.isTypeSupported(mimeType)) {
-                mimeType = 'video/mp4';
-            }
-
-            mediaRecorder = new MediaRecorder(combinedStream, {
-                mimeType: mimeType,
-                videoBitsPerSecond: 8000000
-            });
+            const combined = new MediaStream([...stream.getVideoTracks(), ...audioDest.stream.getAudioTracks()]);
+            mediaRecorder = new MediaRecorder(combined, { mimeType: 'video/webm;codecs=vp9', videoBitsPerSecond: 8000000 });
             
             recordedChunks = [];
-            mediaRecorder.ondataavailable = e => { 
-                if(e.data.size > 0) recordedChunks.push(e.data); 
-            };
-            
+            mediaRecorder.ondataavailable = e => recordedChunks.push(e.data);
             mediaRecorder.onstop = () => {
-                const finalVideoBlob = new Blob(recordedChunks, { type: mimeType });
-                videoUrl = URL.createObjectURL(finalVideoBlob);
-                
-                downloadVideo.onclick = () => {
-                    const a = document.createElement('a');
-                    a.href = videoUrl;
-                    a.download = `Quran_${Date.now()}.${mimeType.split('/')[1].split(';')[0]}`;
-                    a.click();
-                };
-                
-                statusArea.classList.add('hidden');
-                playerBox.classList.remove('hidden');
+                const blob = new Blob(recordedChunks, { type: 'video/mp4' });
+                videoUrl = URL.createObjectURL(blob);
                 downloadButtons.classList.remove('hidden');
-                mergeBtn.classList.remove('hidden');
-                resetMergeBtn();
+                setBtnState("تم الانجاز", false);
+                setTimeout(() => setBtnState("توليد المقطع", false), 3000);
             };
 
             mediaRecorder.start();
-            audioElement.currentTime = 0;
-            audioElement.play().catch(e => {
-                console.error('Audio play failed:', e);
-                alert('فشل تشغيل الصوت: ' + e.message);
-                mediaRecorder.stop();
-                statusArea.classList.add('hidden');
-                resetMergeBtn();
-            });
+            audioElement.play();
 
             const sync = () => {
-                if (!mediaRecorder || mediaRecorder.state !== "recording") return;
+                if (mediaRecorder.state !== "recording") return;
                 const ct = audioElement.currentTime;
                 const active = timestamps.find(t => ct >= t.start && ct < t.end);
-                
                 if (active) currentAyahText = active.text;
                 
-                if(!audioElement.ended) {
-                    requestAnimationFrame(sync);
-                } else {
-                    if (mediaRecorder.state === "recording") {
-                        currentAyahText = "تم";
-                        mediaRecorder.stop();
-                    }
-                }
+                if(!audioElement.ended) requestAnimationFrame(sync);
+                else mediaRecorder.stop();
             };
             sync();
         }
 
         function mergeBuffers(bufs, overlap) {
-            const sr = bufs[0].sampleRate;
-            const ovSamples = Math.floor(overlap * sr);
-            let totalLen = bufs.reduce((a, b) => a + b.length, 0) - (bufs.length - 1) * ovSamples;
-            const res = audioCtx.createBuffer(bufs[0].numberOfChannels, totalLen, sr);
-
+            const sr = bufs[0].sampleRate, ov = Math.floor(overlap * sr);
+            let total = bufs.reduce((a, b) => a + b.length, 0) - (bufs.length - 1) * ov;
+            const res = audioCtx.createBuffer(bufs[0].numberOfChannels, total, sr);
             for(let c=0; c<bufs[0].numberOfChannels; c++) {
                 const data = res.getChannelData(c);
-                let cursor = 0;
+                let cur = 0;
                 bufs.forEach((b, i) => {
                     const bData = b.getChannelData(c);
                     for(let j=0; j<bData.length; j++) {
-                        const idx = cursor + j;
-                        if(i > 0 && j < ovSamples) {
-                            const weight = j / ovSamples;
-                            data[idx - ovSamples] = (data[idx - ovSamples] * (1 - weight)) + (bData[j] * weight);
+                        if(i > 0 && j < ov) {
+                            const w = j / ov;
+                            data[cur - ov + j] = (data[cur - ov + j] * (1-w)) + (bData[j] * w);
                         } else {
-                            data[i > 0 ? idx - ovSamples : idx] = bData[j];
+                            data[i > 0 ? cur - ov + j : cur + j] = bData[j];
                         }
                     }
-                    cursor += bData.length - (i < bufs.length - 1 ? ovSamples : 0);
+                    cur += bData.length - (i < bufs.length - 1 ? ov : 0);
                 });
             }
             return res;
@@ -710,6 +464,13 @@
             }
             return new Blob([buf], { type: 'audio/wav' });
         }
+
+        downloadVideo.onclick = () => {
+            const a = document.createElement('a');
+            a.href = videoUrl;
+            a.download = `Recitation_${Date.now()}.mp4`;
+            a.click();
+        };
 
         init();
     </script>
